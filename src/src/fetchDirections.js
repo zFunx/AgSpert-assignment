@@ -16,7 +16,7 @@ export default async function fetchDirections(origin, destination, setRoute) {
     {
       origin: originLocation,
       destination: destinationLocation,
-      travelMode: google.maps.TravelMode.DRIVING,
+      travelMode: google.maps.TravelMode.WALKING,
     },
     (result, status) => {
       if (status === "OK" && result) {
@@ -24,6 +24,7 @@ export default async function fetchDirections(origin, destination, setRoute) {
           lat: path.lat(),
           lng: path.lng(),
         }));
+        console.log(route);
         setRoute(route);
       }
     }

@@ -28,7 +28,7 @@ function animate() {
 
 const mapOptions = {
   mapId: process.env.NEXT_PUBLIC_MAP_ID,
-  center: { lat: 43.66293, lng: -79.39314 },
+  center: { lat: 28.600130000000004, lng: 77.226980000000 },
   zoom: 18,
   disableDefaultUI: true,
   heading: 25,
@@ -62,8 +62,8 @@ function MyMap() {
 }
 
 function Directions({ setRoute }) {
-  const [origin] = useState("27 Front St E Toronto");
-  const [destination] = useState("75 Yonge Street Toronto");
+  const [origin] = useState("Khan Market");
+  const [destination] = useState("India Gate");
 
   useEffect(() => {
     fetchDirections(origin, destination, setRoute);
