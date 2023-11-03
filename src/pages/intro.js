@@ -53,7 +53,7 @@ function createOverlay(map) {
     scene.add(light);
 
     loader = new GLTFLoader();
-    loader.loadAsync("/low_poly_scooter/scene.gltf").then((object) => {
+    loader.loadAsync("/smurf/scene.gltf").then((object) => {
       const group = object.scene;
       group.scale.setScalar(25);
       group.rotation.set(Math.PI / 2, 0, 0);

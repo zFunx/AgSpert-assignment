@@ -1,0 +1,11 @@
+Model Information:
+* title:	Blue Smurf Cat With White Hat
+* source:	https://sketchfab.com/3d-models/blue-smurf-cat-with-white-hat-2ca97e27c5524f42bd6eab69af90c8de
+* author:	Yameez (https://sketchfab.com/Yameez)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Blue Smurf Cat With White Hat" (https://sketchfab.com/3d-models/blue-smurf-cat-with-white-hat-2ca97e27c5524f42bd6eab69af90c8de) by Yameez (https://sketchfab.com/Yameez) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
