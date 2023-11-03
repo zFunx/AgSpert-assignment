@@ -3,10 +3,28 @@ import { Wrapper } from "@googlemaps/react-wrapper";
 import ThreejsOverlayView from "@ubilabs/threejs-overlay-view";
 import { CatmullRomCurve3, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import * as THREE from 'three';
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import fetchDirections from "../src/fetchDirections";
+
+// Animating character
+const clock = new THREE.Clock();
+let mixer;
+function animate() {
+  requestAnimationFrame(animate);
+
+  // Update the mixer on each frame
+  if (mixer) {
+    const delta = clock.getDelta();
+    mixer.update(delta);
+  }
+
+  // renderer.render(scene, camera);
+}
+
+
 
 const mapOptions = {
   mapId: process.env.NEXT_PUBLIC_MAP_ID,
@@ -92,8 +110,9 @@ function Animate({ route, map }) {
       if (carRef.current) {
         scene.remove(carRef.current);
       }
-      carRef.current = model;
+      carRef.current = model.group;
       scene.add(carRef.current);
+      animate();
     });
 
     overlayRef.current.update = () => {
@@ -141,5 +160,18 @@ async function loadModel() {
   const group = object.scene;
   group.scale.setScalar(25);
 
-  return group;
+  if (object.animations && object.animations.length) {
+    // Create an AnimationMixer for the group
+    mixer = new THREE.AnimationMixer(group);
+
+    // Play all the animations
+    for (const animation of object.animations) {
+      mixer.clipAction(animation).play();
+    }
+  }
+
+  // Return the group and mixer
+  return { group, mixer };
+
+  // return group;
 }
