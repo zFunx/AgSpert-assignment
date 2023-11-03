@@ -3,7 +3,7 @@ import { Wrapper } from "@googlemaps/react-wrapper";
 import ThreejsOverlayView from "@ubilabs/threejs-overlay-view";
 import { CatmullRomCurve3, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import * as THREE from 'three';
+import * as THREE from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
@@ -24,15 +24,22 @@ function animate() {
   // renderer.render(scene, camera);
 }
 
-
-
 const mapOptions = {
   mapId: process.env.NEXT_PUBLIC_MAP_ID,
-  center: { lat: 28.600130000000004, lng: 77.226980000000 },
+  center: { lat: 43.66293, lng: -79.39314 },
   zoom: 18,
   disableDefaultUI: true,
   heading: 25,
   tilt: 60,
+};
+/**
+ * Set mid point between source and destaination lat and lng for camera
+ */
+const setMidPoint = ({ sourceCoords, destinationCoords }) => {
+  mapOptions.center = {
+    lat: (sourceCoords.lat + destinationCoords.lat) / 2,
+    lng: (sourceCoords.lng + destinationCoords.lng) / 2,
+  };
 };
 
 export default function App() {
@@ -62,11 +69,11 @@ function MyMap() {
 }
 
 function Directions({ setRoute }) {
-  const [origin] = useState("Khan Market");
-  const [destination] = useState("India Gate");
+  const [origin] = useState("Okhla NSIC metro station");
+  const [destination] = useState("Lotus Temple");
 
   useEffect(() => {
-    fetchDirections(origin, destination, setRoute);
+    fetchDirections(origin, destination, setRoute, setMidPoint);
   }, [origin, destination]);
 
   return (

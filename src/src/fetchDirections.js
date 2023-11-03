@@ -1,6 +1,6 @@
 import { getGeocode, getLatLng } from "use-places-autocomplete";
 
-export default async function fetchDirections(origin, destination, setRoute) {
+export default async function fetchDirections(origin, destination, setRoute, setMidPoint) {
   const [originResults, destinationResults] = await Promise.all([
     getGeocode({ address: origin }),
     getGeocode({ address: destination }),
@@ -24,8 +24,8 @@ export default async function fetchDirections(origin, destination, setRoute) {
           lat: path.lat(),
           lng: path.lng(),
         }));
-        console.log(route);
         setRoute(route);
+        setMidPoint({sourceCoords: originLocation, destinationCoords: destinationLocation});
       }
     }
   );
