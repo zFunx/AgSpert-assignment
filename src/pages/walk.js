@@ -8,6 +8,7 @@ import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import fetchDirections from "../src/fetchDirections";
+import Cookies from "js-cookie";
 
 // Animating character
 const clock = new THREE.Clock();
@@ -25,7 +26,7 @@ function animate() {
 }
 
 const mapOptions = {
-  mapId: process.env.NEXT_PUBLIC_MAP_ID,
+  mapId: Cookies.get("googleMapId"),
   center: { lat: 43.66293, lng: -79.39314 },
   zoom: 18,
   disableDefaultUI: true,
@@ -43,9 +44,23 @@ const setMidPoint = ({ sourceCoords, destinationCoords }) => {
 };
 
 export default function App() {
+  const [isSetup, setIsSetup] = useState(false); // Check if all details are filled from the form
+  useEffect(() => {
+    if (
+      !Cookies.get("googleMapKey") ||
+      !Cookies.get("googleMapId") ||
+      !Cookies.get("originLocation") ||
+      !Cookies.get("destinationLocation")
+    ) {
+      window.location.href = "/";
+    } else {
+      setIsSetup(true);
+    }
+  }, []);
+
   return (
-    <Wrapper apiKey={process.env.NEXT_PUBLIC_MAP_API_KEY}>
-      <MyMap />
+    <Wrapper apiKey={Cookies.get("googleMapKey")}>
+      {isSetup ? <MyMap /> : "Error: Setup is not done"}
     </Wrapper>
   );
 }
@@ -69,8 +84,8 @@ function MyMap() {
 }
 
 function Directions({ setRoute }) {
-  const [origin] = useState("Okhla NSIC metro station");
-  const [destination] = useState("Lotus Temple");
+  const [origin] = useState(Cookies.get("originLocation"));
+  const [destination] = useState(Cookies.get("destinationLocation"));
 
   useEffect(() => {
     fetchDirections(origin, destination, setRoute, setMidPoint);
@@ -87,7 +102,7 @@ function Directions({ setRoute }) {
   );
 }
 
-const ANIMATION_MS = 10000;
+let ANIMATION_MS = 10000;
 const FRONT_VECTOR = new Vector3(0, -1, 0);
 
 function Animate({ route, map }) {
@@ -106,6 +121,7 @@ function Animate({ route, map }) {
     const scene = overlayRef.current.getScene();
     const points = route.map((p) => overlayRef.current.latLngAltToVector3(p));
     const curve = new CatmullRomCurve3(points);
+    calDistanceAndTime(curve)
 
     if (trackRef.current) {
       scene.remove(trackRef.current);
@@ -162,7 +178,6 @@ function createTrackFromCurve(curve) {
 
 async function loadModel() {
   const loader = new GLTFLoader();
-  // This work is based on "Low poly Car" (https://sketchfab.com/3d-models/low-poly-car-f822f0c500a24ca9ac2af183d2e630b4) by reyad.bader (https://sketchfab.com/reyad.bader) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
   const object = await loader.loadAsync("/smurf/scene.gltf");
   const group = object.scene;
   group.scale.setScalar(25);
@@ -179,6 +194,20 @@ async function loadModel() {
 
   // Return the group and mixer
   return { group, mixer };
+}
 
-  // return group;
+function calDistanceAndTime(curve) {
+  // Assume 'curve' is your CatmullRomCurve3 object
+  const points = curve.getPoints(); // Get an array of Vector3 points that make up the curve
+  let totalDistance = 0;
+
+  for (let i = 0; i < points.length - 1; i++) {
+    totalDistance += points[i].distanceTo(points[i + 1]);
+  }
+
+  // Calculate time to travel totalDistance at 1.4 m/s or 5km/h
+  const timeInSeconds = totalDistance / 1.4;
+
+  // Set ANIMATION_MS to time in milliseconds
+  ANIMATION_MS = timeInSeconds * 1000;
 }
